@@ -3,30 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class AimingBullet : MonoBehaviour
+public class AimingBullet : BaseBullet
 {
-    private Rigidbody2D rb;
-    private GameObject player;
-    private GameObject enemy;
-    public float defaultSpeed = 5.0f;
+    protected GameObject player;
+    protected GameObject spawn;
 
-    void Start()
+    protected override void Awake()
     {
-        Debug.Log("Hi");
-        rb = GetComponent<Rigidbody2D>();
+        base.Awake();
         player = GameObject.FindGameObjectWithTag("Player");
-        enemy = GameObject.FindGameObjectWithTag("Enemy");
-        this.Shoot(player.transform.position, enemy.transform.position, defaultSpeed);
+        spawn = GameObject.FindGameObjectWithTag("Spawn");
     }
 
-    public void Shoot(
-       Vector3 pPos, // player's location
-       Vector3 ePos,  // enemy's location
-       float speed     // bullet's speed
-   )
+    public override void LoadFire()
     {
-        Vector2 direction = new Vector2(pPos.x - ePos.x, pPos.y - ePos.y);
-        direction.Normalize();
-        rb.velocity = direction * speed;
+        Vector3 pPos = this.player.transform.position;
+        Vector3 ePos = this.spawn.transform.position;
+        direction = new Vector2(pPos.x - ePos.x, pPos.y - ePos.y);
+    }
+
+    public override string ToString()
+    {
+        return "AimingBullet";
     }
 }

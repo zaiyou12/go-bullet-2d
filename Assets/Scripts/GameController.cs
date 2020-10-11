@@ -5,8 +5,10 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     public TextAsset csvFile;
+    public float bulletSpeed = 5.0f;
     public GameObject AimingBullet;
-    public GameObject enemy;
+    public GameObject DirectBullet;
+    GameObject spawn;
     CsvReader csvReader = new CsvReader();
     List<Row> rowList = new List<Row>();
     private float timer = 0.0f;
@@ -19,6 +21,7 @@ public class GameController : MonoBehaviour
     }
     void Start()
     {
+        spawn = GameObject.FindGameObjectWithTag("Spawn");
         rowList = csvReader.Load(csvFile);
         lastIndex = rowList.Count;
     }
@@ -37,6 +40,23 @@ public class GameController : MonoBehaviour
     void SpawnDanmaku(Row row)
     {
         Debug.Log(row.ToString());
-        Instantiate(AimingBullet, enemy.transform.position,  enemy.transform.rotation);
+        GameObject clone;
+
+        switch (row.danmakuType)
+        {
+            case 1:
+                // Aimming Bullet
+                clone = Instantiate(AimingBullet, spawn.transform.position, spawn.transform.rotation);
+                break;
+            case 2:
+            default:
+                // Direct Bullet
+                clone = Instantiate(DirectBullet, spawn.transform.position, spawn.transform.rotation);
+                break;
+        }
+        BaseBullet bullet = clone.GetComponent<BaseBullet>();
+        // Debug.Log(bullet.ToString());
+        bullet.LoadFire();
+        bullet.Fire(bulletSpeed);
     }
 }
