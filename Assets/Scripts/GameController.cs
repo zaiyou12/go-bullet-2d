@@ -4,46 +4,39 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public int invokeTimer = 0;
     public TextAsset csvFile;
+    public GameObject AimingBullet;
+    public GameObject enemy;
     CsvReader csvReader = new CsvReader();
     List<Row> rowList = new List<Row>();
-    // Timer
+    private float timer = 0.0f;
+    private int curIndex = 0;
+    private int lastIndex = 0;
 
-
-    // Start is called before the first frame update
+    void Awake()
+    {
+        Time.timeScale = 1.0f;
+    }
     void Start()
     {
         rowList = csvReader.Load(csvFile);
-
-        // Timer start
-        InvokeRepeating("InvokeTimer", 1.0f, 1.0f);
-        StartCoroutine(SpawnWaves());
+        lastIndex = rowList.Count;
     }
 
-    IEnumerator SpawnWaves()
+    void Update()
     {
-        int index = 0;
-        int lastIndex = rowList.Count - 1;
+        timer += Time.deltaTime;
 
-        while (true)
+        if (curIndex < lastIndex && timer > rowList[curIndex].time)
         {
-            if (invokeTimer >= rowList[index].time)
-            {
-                Debug.Log(rowList[index].ToString());
-                
-                index++;
-                if (index >= lastIndex)
-                {
-                    break;
-                }
-                yield return new WaitForSeconds(1);
-            }
+            SpawnDanmaku(rowList[curIndex]);
+            curIndex++;
         }
     }
 
-    void InvokeTimer()
+    void SpawnDanmaku(Row row)
     {
-        invokeTimer++;
+        Debug.Log(row.ToString());
+        Instantiate(AimingBullet, enemy.transform.position,  enemy.transform.rotation);
     }
 }

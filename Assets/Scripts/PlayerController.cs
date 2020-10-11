@@ -10,6 +10,7 @@ public class Boundary {
 public class PlayerController : MonoBehaviour
 {
     public float speed;
+    public float tilt;
     public Boundary boundary;
     private Rigidbody2D rb;
 
@@ -24,13 +25,13 @@ public class PlayerController : MonoBehaviour
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
 
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, 0.0f);
+        Vector2 movement = new Vector2(moveHorizontal, 0.0f);
         rb.velocity = movement * speed;
 
-        rb.position = new Vector3(
+        rb.position = new Vector2(
             Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
-            0.0f,
             0.0f
         );
+        rb.rotation = rb.velocity.x * -tilt;
     }
 }
